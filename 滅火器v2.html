@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="可離線執行的 3D 滅火器操作練習：拉、瞄、壓、掃。">
+<title>滅火器｜FIRE DRILL 3D · 教學強化版</title>
+<style>
+:root{color-scheme:dark;--ink:#ecf2f0;--muted:#91a09f;--yellow:#eafa76;--green:#9ee4bf;--line:rgba(211,235,230,.15);--panel:rgba(17,27,29,.86)}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden}body{background:#101b20;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI","Microsoft JhengHei",sans-serif}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible{outline:3px solid white;outline-offset:4px}button:disabled{cursor:default;opacity:.45}button,canvas{-webkit-tap-highlight-color:transparent}button{touch-action:manipulation}button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7}canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}#game{position:relative;width:100%;height:100%;min-height:380px;isolation:isolate}#vignette{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(9,18,21,.5),transparent 25%,transparent 67%,rgba(9,18,21,.72)),radial-gradient(ellipse at 52% 45%,transparent 25%,rgba(5,13,17,.4))}.header{position:absolute;z-index:5;left:34px;right:34px;top:25px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;gap:11px;align-items:center;letter-spacing:.16em;font-size:16px;font-weight:800}.brand svg{width:30px;height:36px}.brand small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:.18em;margin-left:4px}.tools{display:flex;gap:8px;align-items:center}.iconbtn{border:1px solid var(--line);border-radius:50%;background:rgba(16,27,29,.65);height:40px;min-width:40px;display:grid;place-items:center}.iconbtn:hover{background:#334347;color:var(--yellow)}.offline{color:#adbbb8;font-size:14px;letter-spacing:.08em;margin-right:12px;display:flex;gap:7px;align-items:center}.offline i{width:5px;height:5px;background:var(--green);border-radius:50%}#home{position:absolute;inset:0;z-index:3;display:flex;align-items:center;background:linear-gradient(90deg,rgba(10,21,25,.98),rgba(10,21,25,.85) 34%,rgba(10,21,25,.12) 72%)}.homecopy{margin:65px 0 35px 7.2%;width:46%;max-width:590px}.eyebrow{font-size:14px;font-weight:650;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);display:flex;align-items:center;gap:10px}.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}h1{font-size:clamp(40px,5.2vw,77px);letter-spacing:-.04em;line-height:1.19;margin:23px 0 21px;font-weight:850}h1 span{color:var(--yellow)}.lead{font-size:17px;color:#a6b5b3;max-width:410px;line-height:1.9;margin:0 0 26px}.mnemonic{display:flex;gap:22px;margin:25px 0 29px}.mnemonic div{display:flex;align-items:center;gap:8px}.mnemonic b{font-size:25px;font-weight:650}.mnemonic small{font-size:14px;letter-spacing:.07em;color:#92a3a1;writing-mode:vertical-rl}.modepicker{display:flex;gap:8px;margin-bottom:16px}.mode{border:1px solid var(--line);background:#152629c9;text-align:left;padding:11px 17px;border-radius:8px;min-width:157px}.mode strong{display:block;font-size:14px;font-weight:650}.mode small{font-size:14px;color:#9baaa7}.mode[aria-pressed=true]{border-color:var(--yellow);background:rgba(234,250,118,.07)}.mode[aria-pressed=true] strong{color:var(--yellow)}.primary{background:var(--yellow);border:0;border-radius:7px;color:#192323;font-weight:750;padding:14px 26px;min-width:220px;box-shadow:0 3px 24px #deef7112;transition:background .2s,transform .2s}.primary:hover{background:#f5ffad;transform:translateY(-1px)}.startrow{display:flex;gap:14px;align-items:center}.startrow small{font-size:14px;color:#99aaa6}.safety{font-size:14px;color:#91a3a0;max-width:445px;margin-top:23px;line-height:1.8}.homebadge{position:absolute;right:7%;bottom:19%;border-left:2px solid var(--yellow);padding-left:14px}.homebadge b{font-size:14px;font-weight:600}.homebadge small{display:block;color:#94a8a6;font-size:14px;margin-top:4px}.homefooter{position:absolute;left:7.2%;bottom:27px;font-size:14px;color:#728b8c;letter-spacing:.14em}.sceneid{font-size:14px;color:#90a4a1;letter-spacing:.12em;margin-left:32px;border-left:1px solid var(--line);padding-left:20px}#hud{display:none;position:absolute;inset:0;z-index:2;pointer-events:none}body.playing #hud{display:block}body.playing #home{display:none}.rail{position:absolute;left:30px;top:116px;width:198px}.railtitle{letter-spacing:.12em;color:#8ea19f;font-size:14px;margin:0 0 19px 3px}.step{position:relative;display:flex;gap:13px;align-items:center;padding:16px 13px;margin-bottom:6px;border:1px solid transparent;border-radius:8px;transition:all .3s;background:rgba(10,21,24,.34)}.step .num{font-size:14px;color:#6d8787;align-self:flex-start;padding-top:6px}.step .word{font-size:26px;line-height:1.2;font-weight:700;min-width:27px}.step .detail{font-size:14px;color:#96aaa7}.step .detail small{font-size:14px;display:block;letter-spacing:.09em;color:#657f7e}.step.active{border-color:rgba(234,250,118,.5);background:rgba(234,250,118,.07)}.step.active .word,.step.active .num{color:var(--yellow)}.step.active .detail{color:#e5ecdf}.step.done .word{color:var(--green)}.step.done .num{color:var(--green)}.stats{position:absolute;right:30px;top:119px;width:154px;background:rgba(13,25,28,.72);border:1px solid var(--line);border-radius:9px;padding:17px 18px}.statlabel{font-size:14px;color:#91aaa5;letter-spacing:.08em}.statnumber{font-size:30px;line-height:1.3;font-variant-numeric:tabular-nums;font-weight:550;margin-top:5px}.statnumber small{font-size:14px;color:#95a7a1;margin-left:5px}.divider{height:1px;background:var(--line);margin:16px 0}.meter{height:4px;background:#314445;border-radius:3px;margin:11px 0 0;overflow:hidden}.meter>i{display:block;background:var(--yellow);height:100%;width:100%;transition:width .1s}.statnumber.gas{font-size:23px}.progresspanel{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:min(360px,35%);text-align:center}.progresspanel .statlabel{font-size:14px;color:#a2b4af}.heatbar{height:5px;background:#304044;overflow:hidden;border-radius:6px;margin:8px 0}.heatbar>i{display:block;height:100%;background:linear-gradient(90deg,#eaba63,#ff7656);width:100%;transition:width .15s}.coverage{display:flex;gap:3px;justify-content:center;margin-top:9px}.coverage span{height:3px;width:25px;background:#324b4b;transition:background .2s}.coverage span.done{background:var(--green)}#focus{position:absolute;left:50%;top:50%;width:46px;height:46px;transform:translate(-50%,-50%);pointer-events:none;border:1px solid #e6f3df99;border-radius:50%;filter:drop-shadow(0 1px 2px #06191c);transition:border-color .15s}.reticle-line{position:absolute;background:#e6f3df99}#focus:before,#focus:after{content:"";position:absolute;background:currentColor;color:#e6f3dfaa}#focus:before{width:1px;height:15px;left:22px;top:15px}#focus:after{height:1px;width:15px;left:15px;top:22px}#focus.locked{border-color:var(--yellow);box-shadow:0 0 0 5px #eafa7613}#focus.locked:before,#focus.locked:after{color:var(--yellow)}#focus .arc{position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(var(--yellow) var(--lock,0%),transparent 0);mask:radial-gradient(transparent 63%,black 65%);-webkit-mask:radial-gradient(transparent 63%,black 65%)}#targetlabel{position:absolute;transform:translate(-50%,0);font-size:14px;color:var(--yellow);white-space:nowrap;text-shadow:0 2px 4px black;pointer-events:none}#targetlabel:before{content:"";display:block;width:1px;height:21px;background:#eafa7699;margin:0 auto 6px}.basepoint{position:absolute;transform:translate(-50%,-50%);width:17px;height:17px;border:1px solid var(--yellow);border-radius:50%;background:#eafa761c;box-shadow:0 0 15px #eafa7622}.basepoint.done{border-color:var(--green);background:#9ee4bf66}#pincontrol{pointer-events:auto;position:absolute;left:50%;bottom:145px;transform:translateX(-50%);display:flex;align-items:center;gap:18px;padding:12px 23px 12px 13px;border-radius:50px;border:1px solid #eafa7659;background:rgba(15,31,31,.9);touch-action:none;user-select:none}#pinring{position:relative;display:grid;place-items:center;width:46px;height:46px;min-width:46px;border:5px solid #dce4cc;border-radius:50%;box-shadow:inset 0 0 0 2px #697b76,0 0 0 2px #697b76;cursor:grab;color:var(--yellow);font-size:14px;background:transparent;padding:0;touch-action:none}#pinring:active{cursor:grabbing}#pinring:after{content:"";position:absolute;height:5px;width:30px;right:-30px;top:16px;background:#c8d2bf;border-radius:2px;pointer-events:none}#pincontrol b{font-size:14px;font-weight:550;margin-left:12px}#pincontrol small{display:block;font-size:14px;color:#8fa6a0}.instruction{position:absolute;bottom:36px;left:50%;width:min(620px,55%);transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:11px;display:flex;gap:18px;align-items:center;padding:16px 20px;box-shadow:0 14px 44px #08191d66}.instruction .bigstep{background:var(--yellow);color:#1b2b2c;font-size:28px;border-radius:7px;width:52px;min-width:52px;height:52px;display:grid;place-items:center;font-weight:750}.instruction h2{font-size:17px;margin:0 0 3px}.instruction p{color:#9aafaa;font-size:14px;margin:0}.keyhint{position:absolute;bottom:35px;left:30px;font-size:14px;color:#a0b3ae;line-height:2}.key{display:inline-block;padding:0 5px;border:1px solid #718c7d55;border-radius:4px;color:#cedace;font-size:14px;line-height:18px;margin:0 2px}#spraybtn{position:absolute;right:30px;bottom:37px;pointer-events:auto;width:143px;height:70px;background:var(--yellow);border:0;border-radius:10px;color:#182b29;touch-action:none;user-select:none;box-shadow:0 6px 27px #0a17194d}#spraybtn b{display:block;font-size:18px;letter-spacing:.08em}#spraybtn small{font-size:14px;opacity:.7}#spraybtn.spraying{background:#fffed3;transform:translateY(2px)}#toast{position:absolute;z-index:9;top:173px;left:50%;transform:translate(-50%,-10px);padding:9px 20px;border:1px solid #9ee4bf44;background:#152b29ed;border-radius:50px;color:var(--green);font-size:14px;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;white-space:nowrap}#toast.show{opacity:1;transform:translate(-50%,0)}#pause,#result,#help,#unsupported{position:absolute;inset:0;z-index:10;background:rgba(6,17,21,.77);backdrop-filter:blur(12px);display:none;place-items:center;padding:22px}.modal{background:#14282b;border:1px solid #78998b33;border-radius:16px;padding:35px;max-width:570px;width:100%;box-shadow:0 25px 120px #0006}.modal h2{font-size:30px;letter-spacing:-.02em;margin:12px 0}.modal p{color:#a5bbb4;font-size:14px}.modal button+button{margin-left:9px}.secondary{border:1px solid var(--line);background:#233c3d;border-radius:7px;padding:13px 20px;font-size:14px}.secondary:hover{background:#314a49}.modal .primary{min-width:0}.resulticon{width:50px;height:50px;display:grid;place-items:center;background:#eafa7614;border:1px solid #eafa7655;border-radius:50%;font-size:25px;color:var(--yellow)}.resultstats{display:grid;grid-template-columns:repeat(3,1fr);border-block:1px solid var(--line);margin:22px 0;padding:19px 0;gap:10px}.resultstats b{display:block;font-size:26px;font-weight:550;font-variant-numeric:tabular-nums}.resultstats small{font-size:14px;color:#94aaa5}.resultsteps{display:flex;gap:9px;margin:18px 0 23px}.resultsteps span{flex:1;border:1px solid #57746c44;border-radius:7px;padding:8px;text-align:center;color:#7b938c;font-size:14px}.resultsteps span.done{color:var(--green);background:#9ee4bf0a;border-color:#9ee4bf44}.resultfoot{font-size:14px!important;line-height:1.8}.helpgrid{display:grid;grid-template-columns:35px 1fr;gap:13px;margin:22px 0}.helpgrid b{color:var(--yellow);font-size:22px}.helpgrid p{margin:0;font-size:14px}.helpgrid small{color:#809e94;font-size:14px;display:block}.source{font-size:14px;color:#8fa99d;line-height:1.8}.source a{color:#c1d6b1}#help .modal{max-height:94vh;overflow:auto}#rotatehint{display:none}#best{margin-top:16px;font-size:14px;color:#8ea59c}.hidden{display:none!important}
+@media(max-width:1000px){.homecopy{margin-left:5%;width:52%}.header{left:22px;right:22px}.rail{left:18px;width:163px}.step{gap:10px;padding:13px 10px}.step .detail{font-size:14px}.stats{right:18px;width:126px;padding:13px}.instruction{width:55%;bottom:26px;padding:13px 15px;gap:12px}.instruction h2{font-size:15px}.instruction p{font-size:14px}.keyhint{left:20px;bottom:25px}#spraybtn{right:18px;bottom:27px;width:125px}.sceneid{display:none}.offline{display:none}.mnemonic{gap:19px}.homebadge{right:5%;bottom:24%}}
+@media(max-width:700px){.header{left:16px;right:16px;top:15px}.brand{font-size:14px;gap:8px}.brand small{display:none}.brand svg{height:29px;width:24px}.iconbtn{width:35px;min-width:35px;height:35px}.homecopy{margin:55px 25px 32px;width:100%;max-width:470px}.eyebrow{font-size:14px}h1{font-size:43px;margin:16px 0}.lead{font-size:14px;max-width:305px;margin-bottom:15px}.mnemonic{margin:19px 0;gap:19px}.mnemonic b{font-size:22px}.mode{padding:8px 12px;min-width:135px}.mode small{font-size:14px}.startrow{align-items:flex-start;flex-direction:column;gap:10px}.primary{padding:13px 23px;min-width:220px}.safety{font-size:14px;max-width:330px;margin-top:15px}.homebadge,.homefooter{display:none}#home{background:linear-gradient(90deg,#0a1519f5,#0a1519bc 66%,#0a151935)}.rail{top:78px;left:16px;right:16px;width:auto;display:flex;gap:5px}.railtitle{display:none}.step{padding:8px 10px;flex:1;gap:7px;margin:0;background:#102529ad;border-color:#7c958b22}.step .num,.step .detail small{display:none}.step .word{font-size:22px;min-width:24px}.step .detail{font-size:14px}.stats{right:16px;top:146px;width:93px;padding:11px}.statnumber{font-size:23px}.statlabel{font-size:14px}.statnumber.gas{font-size:20px}.divider{margin:10px 0}.progresspanel{left:16px;transform:none;top:147px;width:41%;text-align:left}.progresspanel .statlabel{font-size:14px}.coverage{justify-content:flex-start}.instruction{bottom:103px;width:calc(100% - 32px);padding:11px 13px;gap:12px}.instruction .bigstep{width:42px;min-width:42px;height:42px;font-size:24px}.instruction p{font-size:14px}.instruction h2{font-size:14px}.keyhint{bottom:24px;left:18px;line-height:1.8;font-size:14px}#spraybtn{bottom:22px;right:16px;width:133px;height:63px}#pincontrol{bottom:204px;padding:9px 17px 9px 11px;gap:13px;min-width:272px}#pinring{width:39px;height:39px;min-width:39px;border-width:4px}#pinring:after{top:14px}#pincontrol b{font-size:14px}#toast{top:226px;font-size:14px;padding:8px 13px;max-width:92%;white-space:normal;text-align:center}#targetlabel{font-size:14px}.modal{padding:25px}.modal h2{font-size:26px}.resultstats b{font-size:23px}.resultsteps{gap:5px}.resultsteps span{font-size:14px;padding:7px 4px}.resultstats{margin:17px 0}.modal p{font-size:14px}#best{margin-top:10px}}
+@media(max-height:620px) and (min-width:701px){.homecopy{margin-top:75px}h1{font-size:43px;margin:14px 0}.lead{margin-bottom:12px;font-size:14px}.mnemonic{margin:16px 0}.modepicker{margin-bottom:11px}.safety{margin-top:13px}.homefooter{display:none}.rail{top:97px}.railtitle{margin-bottom:10px}.step{padding:10px}.stats{top:99px}.progresspanel{top:88px}.instruction{bottom:21px}.keyhint{bottom:18px}#spraybtn{bottom:22px}#pincontrol{bottom:127px}}
+
+/* v2: all instructional and interface text is at least 14px. */
+#home{overflow-y:auto;align-items:flex-start}
+.homecopy{margin:105px 0 50px 6%;width:51%;max-width:590px}
+h1{font-size:clamp(36px,4vw,58px);margin:15px 0}
+.lead{font-size:16px;margin-bottom:15px}
+.mnemonic{margin:16px 0;gap:24px}.mnemonic small{writing-mode:horizontal-tb;font-size:14px}
+.mnemonic div{gap:6px}.mnemonic b{font-size:23px}
+.sceneselect{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0;width:min(100%,490px)}
+.scenebtn{display:flex;gap:12px;align-items:center;min-height:69px;text-align:left;background:#162b2ddc;border:1px solid var(--line);border-radius:8px;padding:9px 12px}
+.scenebtn[aria-pressed=true]{border-color:var(--yellow);background:#eafa7610}
+.scenebtn[aria-pressed=true] strong{color:var(--yellow)}
+.scenebtn svg{width:30px;height:30px;min-width:30px}
+.scenebtn strong{font-size:16px;display:block}.scenebtn small{display:block;font-size:14px;color:#9ab1a8}
+.homebadge{bottom:12%;max-width:35%}.homebadge b{font-size:17px}.homebadge small{font-size:14px;line-height:1.7}
+.homefooter{display:none}.safety{max-width:500px;font-size:14px;margin-top:17px}
+.mode strong{font-size:16px}.mode small{font-size:14px}.startrow small{font-size:14px}.mode{min-width:180px;padding:10px 14px}
+.rail{width:210px;top:121px}.step .detail{font-size:14px}.step .detail small{font-size:14px;letter-spacing:0}
+.step{gap:10px;padding:12px 11px}.step .num{font-size:14px}.step .word{font-size:28px}
+.stats{width:167px;padding:14px}.statlabel{font-size:14px;letter-spacing:0}
+.instruction{width:min(690px,58%);padding:15px;bottom:30px}.instruction p{font-size:14px;line-height:1.65}.instruction h2{font-size:19px}
+.keyhint{font-size:14px;line-height:1.9}.key{font-size:14px;line-height:22px}
+#spraybtn{width:157px;height:77px}.stats .statnumber small,#spraybtn small{font-size:14px}
+.progresspanel{top:98px}.progresspanel .statlabel{font-size:14px}#toast{font-size:14px;top:182px;max-width:70%;white-space:normal;text-align:center}
+#pincontrol{bottom:155px;max-width:540px;width:max-content;padding:13px 23px;pointer-events:none;border-radius:10px}
+#pincontrol b{font-size:18px;margin:0}#pincontrol small{font-size:14px}
+#pinring{position:absolute;z-index:4;pointer-events:auto;width:68px;height:68px;min-width:0;border:2px dashed var(--yellow);background:transparent;color:transparent;box-shadow:0 0 15px #eafa7644,inset 0 0 18px #eafa7622;transform:translate(-50%,-50%);animation:pinpulse 1.2s ease-in-out infinite}
+#pinring:after{display:none}#pinring:hover{background:#eafa7618}
+#pinlabel{position:absolute;z-index:3;transform:translate(-50%,-100%);padding:6px 12px;border-radius:5px;background:#172c2beb;color:var(--yellow);font-size:14px;white-space:nowrap}
+@keyframes pinpulse{50%{box-shadow:0 0 30px #eafa7677,inset 0 0 20px #eafa7633;border-color:#fffde1}}
+#gripcard{position:absolute;left:50%;bottom:155px;transform:translateX(-50%);width:min(560px,55%);padding:17px 20px;border-radius:11px;border:1px solid #eafa7666;background:#10272af0;pointer-events:auto}
+#gripcard h3{font-size:19px;margin:0 0 5px}#gripcard p{font-size:14px;margin:0 0 13px;color:#c3d5c9}
+#gripcard .gripcompare{display:flex;gap:14px;margin:12px 0;font-size:14px}
+.gripcompare span{flex:1;border:1px solid #79968b44;padding:8px;border-radius:6px;color:#96c9ab}
+.gripcompare span:first-child{color:#e99e87}.gripcompare svg{width:100%;height:65px;display:block;margin-bottom:4px}
+#gripbtn{padding:10px 15px;min-width:0;font-size:16px}
+#gripspot{position:absolute;pointer-events:auto;transform:translate(-50%,-50%);width:55px;height:55px;border:2px dashed var(--yellow);border-radius:50%;background:#eafa7614;color:transparent;animation:pinpulse 1.2s infinite}
+#gripreminder{position:absolute;left:50%;top:153px;transform:translateX(-50%);font-size:14px;background:#172c2be8;padding:7px 14px;border-radius:6px;color:var(--yellow);white-space:nowrap}
+#scenariohud{position:absolute;left:30px;top:80px;color:#a9bfb4;font-size:14px}
+#briefing{position:absolute;inset:0;z-index:11;display:none;place-items:center;background:#07171be8;backdrop-filter:blur(10px);padding:20px}
+.briefmodal{width:min(960px,100%);max-height:94vh;overflow:auto;border:1px solid #759f8a44;border-radius:15px;background:#132b2d;box-shadow:0 30px 100px #0006;padding:30px 34px}
+.briefhead{display:flex;justify-content:space-between;align-items:center;gap:20px}.briefhead h2{font-size:30px;margin:10px 0}
+.briefcount{color:var(--yellow);font-size:16px;white-space:nowrap}.briefdots{display:flex;gap:7px;margin-bottom:15px}.briefdots i{height:4px;background:#38564c;flex:1}.briefdots i.on{background:var(--yellow)}
+.briefpage{display:none}.briefpage.on{display:block}.briefpage p{font-size:16px;line-height:1.8;color:#bbcec1}
+.teachcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.teachcards article{border:1px solid #7ca09033;border-radius:8px;padding:17px;background:#1a3434}.teachcards b{font-size:19px;color:var(--yellow)}
+.teachcards p{font-size:16px;margin:9px 0 0}
+.passstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0}.passstrip div{padding:12px;border:1px solid #75958144;border-radius:7px}.passstrip b{color:var(--yellow);font-size:26px;display:block}.passstrip span{font-size:14px;color:#b2c7b7}
+.briefactions{display:flex;gap:12px;justify-content:space-between;border-top:1px solid var(--line);padding-top:20px;margin-top:21px}
+.typewrap{overflow-x:auto}.typetable{width:100%;border-collapse:collapse;min-width:550px;font-size:16px}
+.typetable th{text-align:left;font-size:14px;font-weight:550;color:#9bb4a7;white-space:nowrap}
+.typetable td,.typetable th{padding:12px 14px;border-bottom:1px solid #789a872c;vertical-align:top}
+.typetable td:first-child{font-weight:650;color:#eff1db;width:22%}.typetable td:last-child{color:#a9c1b2;font-size:14px;width:42%}
+.notebox{border-left:3px solid var(--yellow);background:#eafa7609;padding:13px 17px;margin:17px 0;color:#c8d8bf;font-size:16px;line-height:1.8}
+.sceneinfo{display:flex;gap:16px;align-items:flex-start;margin:16px 0}.sceneinfo .classchip{font-size:24px;background:#eafa7612;color:var(--yellow);padding:14px 20px;border-radius:10px;min-width:65px;text-align:center}
+.sceneinfo h3{margin:0 0 5px;font-size:22px}.sceneinfo p{margin:0}
+.quiz{margin:17px 0;border:1px solid #7a9b8444;padding:17px;border-radius:8px}.quiz h3{margin:0 0 13px;font-size:18px}
+.quizchoices{display:flex;gap:12px}.quizchoices button{flex:1;font-size:16px;padding:12px;border-radius:7px;border:1px solid #7a9b8477;background:#233d39;text-align:left}
+.quizchoices button.correct{border-color:var(--green);background:#9ee4bf14;color:var(--green)}.quizchoices button.wrong{border-color:#f39c78;color:#f9b59c}
+#quizfeedback{min-height:25px;font-size:14px;margin:10px 0 0;color:var(--green)}.source{font-size:14px}
+.modal{max-width:630px}.modal small,.modal p,.resultfoot{font-size:14px!important}.modal .helpgrid p{font-size:16px}
+@media(max-width:1100px){.homecopy{width:55%;margin-left:4%;margin-top:95px}.homebadge{right:4%;max-width:31%;bottom:11%}.sceneid{display:none}.offline{display:none}.rail{width:187px;left:18px}.step .detail small{display:none}.stats{right:18px;width:150px}.instruction{width:55%;bottom:28px}.keyhint{font-size:14px;left:18px;bottom:25px;max-width:180px}#spraybtn{width:143px;right:18px}#gripcard{width:min(570px,60%)}#scenariohud{left:20px}}
+@media(max-width:700px){.header{top:13px;left:13px;right:13px}.brand{font-size:14px;letter-spacing:.04em}.brand small{display:none}.homecopy{width:calc(100% - 36px);max-width:none;margin:83px 18px 35px}.homecopy h1{font-size:37px}.lead{font-size:16px}.homebadge{display:none}.mnemonic{gap:17px;flex-wrap:wrap}.mnemonic div{gap:5px}.mnemonic small{display:none}.sceneselect{width:100%;gap:8px}.scenebtn{padding:10px;gap:8px;min-height:77px}.scenebtn svg{width:25px;min-width:25px}.scenebtn small{font-size:14px}.scenebtn strong{font-size:16px}.modepicker{gap:8px}.mode{min-width:0;flex:1;padding:10px}.mode strong{font-size:16px}.mode small{font-size:14px}.startrow{flex-direction:row;align-items:center;gap:12px}.startrow small{font-size:14px}.primary{min-width:0}.safety{font-size:14px}.rail{left:12px;right:12px;top:82px;width:auto}.step{padding:8px 6px;gap:5px;flex-direction:column;align-items:center}.step .word{font-size:23px}.step .detail{font-size:14px}.stats{top:166px;right:12px;width:104px;padding:10px}.stats .statlabel{font-size:14px}.statnumber{font-size:22px}.statnumber.gas{font-size:20px}.stats .statnumber small{font-size:14px}.progresspanel{left:12px;top:167px;width:47%}.progresspanel .statlabel{font-size:14px}.instruction{left:12px;transform:none;bottom:111px;width:calc(100% - 24px);padding:10px 12px;gap:10px}.instruction h2{font-size:17px}.instruction p{font-size:14px}.instruction .bigstep{width:40px;min-width:40px;height:46px;font-size:26px}.keyhint{left:13px;bottom:20px;width:calc(100% - 165px);font-size:14px;line-height:1.6}.key{font-size:14px}#spraybtn{right:13px;bottom:20px;width:137px;height:74px}#spraybtn small{font-size:14px}#toast{top:260px;max-width:95%;font-size:14px}#scenariohud{top:58px;left:13px;right:13px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#gripreminder{top:221px;left:12px;transform:none;font-size:14px;max-width:67%;white-space:normal;padding:6px 10px}
+#pincontrol{width:calc(100% - 24px);max-width:none;bottom:229px;padding:12px;text-align:center}#pincontrol b{font-size:17px}#pincontrol small{font-size:14px}
+#gripcard{left:12px;transform:none;bottom:227px;width:calc(100% - 24px);padding:12px 14px}#gripcard h3{font-size:18px}#gripcard p{font-size:14px;margin-bottom:8px}#gripcard .gripcompare{margin:8px 0;gap:8px}.gripcompare svg{height:48px}.gripcompare span{padding:6px;font-size:14px}
+#targetlabel{font-size:14px}#focus{width:42px;height:42px}#pinlabel{max-width:90%;white-space:normal;text-align:center}
+#briefing{padding:10px}.briefmodal{padding:20px 17px;max-height:96vh;border-radius:11px}.briefhead h2{font-size:24px}.briefhead{gap:10px}.briefcount{font-size:14px}.teachcards{grid-template-columns:1fr;gap:9px}.teachcards article{padding:12px}.teachcards b{font-size:18px}.teachcards p{font-size:16px;margin-top:5px}.passstrip{grid-template-columns:1fr 1fr}.briefpage p{font-size:16px}.briefactions{gap:8px}.briefactions button{padding:12px;font-size:16px}.quizchoices{flex-direction:column}.sceneinfo{gap:12px}.sceneinfo h3{font-size:20px}.sceneinfo .classchip{padding:10px 14px}.typetable{font-size:16px}.typetable td,.typetable th{padding:11px 9px}.modal{max-height:95vh;overflow:auto;padding:23px}.modal button{margin-top:8px}}
+@media(max-height:650px) and (min-width:701px){.homecopy{margin-top:83px;margin-bottom:25px}.homecopy h1{font-size:36px}.lead{font-size:16px;margin-bottom:10px}.mnemonic{margin:10px 0}.sceneselect{margin:10px 0}.scenebtn{min-height:58px;padding:7px 10px}.mode{padding:8px 12px}.safety{margin-top:12px}.instruction{bottom:18px;max-width:590px}.instruction p{font-size:14px}.rail{top:113px}.step{padding:9px}.stats{top:113px}.keyhint{bottom:18px}.progresspanel{top:85px}#pincontrol{bottom:139px}#gripcard{bottom:139px;padding:13px 16px}#gripcard .gripcompare{margin:8px 0}.gripcompare svg{height:43px}.briefmodal{padding:22px 28px}}
+
+body.pinphase .stats,body.pinphase .progresspanel{visibility:hidden}
+</style>
+</head>
+<body>
+<main id="game">
+<canvas id="scene" aria-label="3D 消防訓練場，使用滑鼠或方向鍵瞄準火源根部" tabindex="0"></canvas><div id="vignette"></div>
+<header class="header"><div style="display:flex;align-items:center"><div class="brand"><svg viewBox="0 0 30 38" aria-hidden="true"><path d="M17 2c1 9-9 10-7 18 1-3 4-4 6-8 0 6 10 10 10 16a11 11 0 0 1-22 0c0-9 5-14 13-26Z" fill="#eafa76"/><path d="M16 23c0 5-6 5-5 10 5 4 11-2 5-10Z" fill="#14282b"/></svg>滅火器<span style="color:#647e7e;font-weight:400">/</span>FIRE DRILL<small>3D</small></div><span class="sceneid" id="sceneid">TRAINING GROUND · 01</span></div><div class="tools"><span class="offline"><i></i>OFFLINE READY</span><button class="iconbtn" id="sound" aria-label="開啟音效" title="音效開關"><svg viewBox="0 0 24 24"><path d="M11 4 6 8H3v8h3l5 4V4Z"/><path id="soundpath" d="m16 9 6 6m0-6-6 6"/></svg></button><button class="iconbtn" id="helpbtn" aria-label="操作說明" title="操作說明"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 5m0 2v1"/></svg></button><button class="iconbtn hidden" id="pausebtn" aria-label="暫停遊戲" title="暫停 / Esc"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button></div></header>
+<section id="home"><div class="homecopy"><div class="eyebrow">Fire response simulator</div><h1>從認識器材，<br>到<span>正確操作。</span></h1><p class="lead">選一個日常起火情境。先看教學，再親手完成<br>「拉、瞄、壓、掃」四個操作。</p><div class="mnemonic" aria-label="拉 瞄 壓 掃"><div><b>拉</b><small>PULL</small></div><div><b>瞄</b><small>AIM</small></div><div><b>壓</b><small>SQUEEZE</small></div><div><b>掃</b><small>SWEEP</small></div></div>
+<div class="sceneselect" aria-label="選擇起火情境">
+<button class="scenebtn" data-scenario="wood" aria-pressed="true"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22h26M3 27h26M6 22v5m10-5v5m10-5v5M6 5h20v14H6zM16 5v14M6 12h20"/></svg><span><strong>木棧板／紙箱</strong><small>A 類 · 普通火災</small></span></button>
+<button class="scenebtn" data-scenario="electrical" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3v7m8-7v7M5 10h14v5a7 7 0 0 1-7 7v5m0 0h12c5 0 5-9 0-9h-2M25 2l-4 7h6l-4 7"/></svg><span><strong>電線／延長線</strong><small>C 類 · 通電設備</small></span></button>
+<button class="scenebtn" data-scenario="car" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m5 13 4-8h14l4 8M3 14h26v10H3zM5 24v4m22-4v4M7 18h4m10 0h4M12 5v8"/></svg><span><strong>燃油汽車模型</strong><small>實車先撤離通報</small></span></button>
+<button class="scenebtn" data-scenario="bin" aria-pressed="false"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 10h20M9 10l2 19h10l2-19M12 5h8l2 5M14 14v11m4-11v11M5 3l3 3"/></svg><span><strong>紙類垃圾桶</strong><small>A 類 · 生活起火</small></span></button>
+</div><div class="modepicker" aria-label="遊戲模式"><button class="mode" data-mode="guided" aria-pressed="true"><strong>引導練習</strong><small>逐步提示 · 輕鬆上手</small></button><button class="mode" data-mode="challenge" aria-pressed="false"><strong>限時挑戰</strong><small>60 秒 · 有限藥劑</small></button></div><div class="startrow"><button id="start" class="primary">教學與開始演練</button><small>滑鼠 / 鍵盤 / 觸控</small></div><p class="safety">本遊戲為操作順序練習。實際火災須先通報、確保退路；火勢或濃煙擴大時，應立即撤離。</p><div id="best"></div></div><div class="homebadge"><b id="homescene">A 類火源 / 木棧板</b><small id="homescenedetail">ABC 乾粉滅火器 · 模擬訓練場</small></div><div class="homefooter">INTERACTIVE SAFETY TRAINING &nbsp; / &nbsp; SINGLE-FILE EDITION</div></section>
+<section id="hud" aria-label="遊戲狀態"><aside class="rail"><p class="railtitle">操作任務 / P.A.S.S.</p><div class="step active" data-step="0"><span class="num">01</span><span class="word">拉</span><div class="detail">拔開安全插梢<small>PULL THE PIN</small></div></div><div class="step" data-step="1"><span class="num">02</span><span class="word">瞄</span><div class="detail">對準火源根部<small>AIM AT THE BASE</small></div></div><div class="step" data-step="2"><span class="num">03</span><span class="word">壓</span><div class="detail">壓下滅火器握把<small>SQUEEZE THE HANDLE</small></div></div><div class="step" data-step="3"><span class="num">04</span><span class="word">掃</span><div class="detail">左右覆蓋火源<small>SWEEP SIDE TO SIDE</small></div></div></aside><div class="progresspanel"><div class="statlabel">剩餘火勢 <span id="heatnum">100</span>%</div><div class="heatbar"><i id="heatfill"></i></div><div class="coverage" id="coverage" aria-label="七個火源區域"></div></div><aside class="stats"><div class="statlabel" id="timelabel">演練時間</div><div class="statnumber" id="timer">00:00</div><div class="divider"></div><div class="statlabel">乾粉餘量</div><div class="statnumber gas"><span id="gasnum">100</span><small>%</small></div><div class="meter"><i id="gasfill"></i></div><div class="divider"></div><div class="statlabel">噴射命中率</div><div style="font-size:19px;margin-top:4px" id="accuracy">—</div></aside><div id="markers"></div><div id="targetlabel">對準火源根部</div><div id="focus"><div class="arc"></div></div><div id="pincontrol"><div><b>握穩提把，拉出發亮的插梢</b><small>拖曳滅火器上的拉環 / 點擊 / 按 P；請勿壓住握把</small></div></div>
+<button id="pinring" aria-label="拔開發亮的安全插梢，向右拖曳或按 P">拔插梢</button><div id="pinlabel">安全插梢 · 向右拉出</div>
+<div id="gripcard" class="hidden"><h3>先握住噴嘴前端，再瞄準。</h3><p>一手操作握把；另一手握前端握持處。只抓軟管中段，噴嘴容易晃動。</p>
+<div class="gripcompare"><span><svg viewBox="0 0 180 65" aria-hidden="true"><path d="M8 45c45-58 42 23 88-2s40 11 66-12" stroke="#81a395" stroke-width="8" fill="none"/><path d="M140 24h28v16h-28" fill="#283f42"/><path d="m46 35 4-16 8-2 17 13-2 17-10 7-16-7Z" fill="#c4a36e"/><path d="m148 5 12 12m0-12-12 12" stroke="#f49a7f" stroke-width="3"/></svg>✕ 只抓軟管中段</span>
+<span><svg viewBox="0 0 180 65" aria-hidden="true"><path d="M8 45c45-58 42 23 88-2s40 11 66-12" stroke="#81a395" stroke-width="8" fill="none"/><path d="M140 24h28v16h-28" fill="#526d6d"/><path d="m133 32 6-13h11l13 13-2 19-12 8-17-11Z" fill="#cfb477"/><path d="m149 4 6 7 11-10" stroke="#9ee4bf" stroke-width="3" fill="none"/></svg>✓ 握住噴嘴前端</span></div>
+<button id="gripbtn" class="primary">握住噴嘴前端 · G</button></div>
+<button id="gripspot" class="hidden" aria-label="握住發亮的噴嘴前端">握噴嘴</button><div id="gripreminder" class="hidden">先握住噴嘴前端</div><div id="scenariohud"></div><div class="instruction" aria-live="polite"><span class="bigstep" id="stepword">拉</span><div><h2 id="tasktitle">先拔開安全插梢</h2><p id="taskdesc">向右拖出拉環，解除滅火器的安全鎖。</p></div></div><div class="keyhint"><span class="key">P</span> 拔梢　<span class="key">G</span> 握噴嘴<br><span class="key">方向鍵</span> 瞄準　<span class="key">Space</span> 噴射</div><button id="spraybtn" disabled><b>按住噴射</b><small>HOLD TO SQUEEZE</small></button></section>
+
+<section id="briefing" role="dialog" aria-modal="true" aria-labelledby="brieftitle">
+<div class="briefmodal">
+<div class="briefhead"><div><div class="eyebrow">Before you begin</div><h2 id="brieftitle">開始前，先記住這些。</h2></div><span class="briefcount" id="briefcount">1 / 3</span></div>
+<div class="briefdots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+<div class="briefpage on" data-page="0">
+<p>本次練習使用 <strong>ABC 乾粉滅火器</strong>。操作前先判斷環境，再記住四個動作。</p>
+<div class="teachcards"><article><b>先通報、留退路</b><p>通報 119、提醒周遭人員；先確認自己能安全撤離。</p></article><article><b>小火才考慮處置</b><p>火勢或濃煙擴大、退路受阻、無法滅火時，立即撤離。</p></article><article><b>看器材標示</b><p>確認適用火災類別與器材狀態，依器材標示及受訓內容操作。</p></article></div>
+<div class="passstrip"><div><b>拉</b><span>握穩提把，拔安全插梢</span></div><div><b>瞄</b><span>握住噴嘴前端，對準根部</span></div><div><b>壓</b><span>按住握把，噴出藥劑</span></div><div><b>掃</b><span>對準根部，緩慢左右掃</span></div></div>
+<div class="notebox"><strong>手的位置很重要：</strong>一手操作握把，另一手握住噴嘴前端的握持處；只抓軟管中段，噴嘴容易晃動，無法穩定瞄準。</div>
+</div>
+<div class="briefpage" data-page="1">
+<p>滅火器並非每一支都通用。<strong>A：木材紙張；B：可燃液體；C：通電電氣設備；D：金屬。</strong></p>
+<div class="typewrap"><table class="typetable"><thead><tr><th>器材種類</th><th>常見適用範圍</th><th>操作前提醒</th></tr></thead><tbody>
+<tr><td>ABC 乾粉</td><td>A、B、C 類</td><td>本遊戲使用；噴後有粉末殘留，實際以瓶身標示為準。</td></tr>
+<tr><td>BC 乾粉</td><td>B、C 類</td><td>不等於 ABC 乾粉；不適用一般 A 類木材紙張。</td></tr>
+<tr><td>二氧化碳 CO₂</td><td>B、C 類</td><td>注意通風與低溫；只握絕緣握把，不握低溫噴筒金屬部。</td></tr>
+<tr><td>水／泡沫</td><td>水：一般 A 類；泡沫：一般 A、B 類</td><td>通常不可用於通電設備；產品若有特殊認可，仍須依標示操作。</td></tr>
+<tr><td>強化液／專用藥劑</td><td>依產品認可類別</td><td>不可只憑顏色判斷；金屬、油鍋等需對應專用器材與訓練。</td></tr>
+</tbody></table></div>
+<div class="notebox">所有類型皆應看清楚認可及適用標示。<strong>油鍋、金屬與電動車電池起火，不能直接套用本遊戲。</strong></div>
+<p class="source">提醒依消防署、臺北市消防局公開資料整理；完整來源可在右上角「操作說明」查看。種類說明僅供辨識，不代表選用或實作訓練。</p>
+</div>
+<div class="briefpage" data-page="2">
+<div class="sceneinfo"><span class="classchip" id="briefclass">A</span><div><h3 id="briefscene">木棧板／紙箱</h3><p id="briefdescription"></p></div></div>
+<div class="notebox" id="briefwarning"></div>
+<div class="quiz"><h3 id="quizquestion">火勢或濃煙擴大、無法滅火時，應該怎麼做？</h3><div class="quizchoices"><button id="quizsafe">立即撤離，通報 119</button><button id="quizunsafe">繼續靠近，直到藥劑用完</button></div><p id="quizfeedback" role="status">選出安全的做法後，即可進入操作模擬。</p></div>
+<p>進入場景後會先放大滅火器，請拉出發亮的插梢；接著握住噴嘴前端，再開始瞄準與噴射。</p>
+</div>
+<div class="briefactions"><button class="secondary" id="briefback">返回主畫面</button><button class="primary" id="briefnext">下一步：認識滅火器</button></div>
+</div></section>
+<div id="toast" role="status"></div>
+<section id="pause" role="dialog" aria-modal="true" aria-labelledby="pausetitle"><div class="modal"><div class="eyebrow">Take a breath</div><h2 id="pausetitle">演練已暫停</h2><p>準備好後，繼續完成拉、瞄、壓、掃。</p><div style="margin-top:24px"><button class="primary" id="resume">繼續演練</button><button class="secondary" id="restart">重新開始</button><button class="secondary" id="backhome">回主畫面</button></div></div></section>
+<section id="result" role="dialog" aria-modal="true" aria-labelledby="resulttitle"><div class="modal"><div class="resulticon" id="resulticon">✓</div><div class="eyebrow" style="margin-top:19px" id="resulteyebrow">Training complete</div><h2 id="resulttitle">火已熄滅。動作到位。</h2><p id="resultmessage"></p><div class="resultstats"><div><b id="resultscore">0</b><small>演練分數 / 100</small></div><div><b id="resulttime">0s</b><small>完成時間</small></div><div><b id="resultgas">0%</b><small>藥劑餘量</small></div></div><div class="resultsteps" id="resultsteps"></div><p class="resultfoot" id="resultfoot">實際滅火後仍須注意復燃並交由消防人員處理；本遊戲無法取代實作訓練。</p><button class="primary" id="again">再練一次</button><button class="secondary" id="result-home">回主畫面</button></div></section>
+<section id="help" role="dialog" aria-modal="true" aria-labelledby="helptitle"><div class="modal"><div class="eyebrow">How to play</div><h2 id="helptitle">四個動作，一次記住。</h2><div class="helpgrid"><b>拉</b><p>畫面會放大滅火器。拖出發亮的插梢，觀看插梢脫離握把。<small>鍵盤 P</small></p><b>瞄</b><p>先握住噴嘴前端的握持處，再移動準星對準火源根部。只抓軟管中段，無法穩定瞄準。<small>G 握噴嘴；移動滑鼠 / 觸控拖曳 / 方向鍵</small></p><b>壓</b><p>按住握把，讓乾粉持續噴出。<small>滑鼠左鍵 / Space / 畫面「按住噴射」</small></p><b>掃</b><p>保持噴射，緩慢左右掃動，覆蓋全部七個火源區域。<small>每個區域熄滅後，標記會轉為綠色</small></p></div><p>引導練習沒有時間限制，藥劑可補充；限時挑戰需在 60 秒內使用一瓶模擬藥劑完成。時間與藥劑設定皆為遊戲數值。</p><p>實際火災先通報 119，確保退路並依器材標示操作。火勢或濃煙擴大、無法滅火時立即撤離。</p><p class="source">教學與器材用途參考：<a href="https://ebook.nfa.gov.tw/1110106/files/basic-html/page69.html" target="_blank" rel="noopener">消防署「滅火器種類與特性」</a>、<a href="https://www.usfa.fema.gov/prevention/vehicle-fires/" target="_blank" rel="noopener">USFA 車輛火災安全</a>、<a href="https://www.nfa.gov.tw/cht/index.php?article_id=684&amp;code=list&amp;flag=detail&amp;ids=21" target="_blank" rel="noopener">內政部消防署「滅火器操作」</a>、<a href="https://www.disasterlearning.gov.taipei/tw/Knowledge/ugC_Knowledge_Detail.aspx?CID=18&amp;ID=110&amp;TID=5" target="_blank" rel="noopener">臺北市消防局防災教育雲</a>。離線遊戲無須開啟連結。</p><button class="primary" id="closehelp">了解，繼續</button></div></section>
+<section id="unsupported"><div class="modal"><h2>需要支援 WebGL 的瀏覽器</h2><p>請將這個 HTML 檔案用新版 Chrome、Edge 或 Firefox 開啟，並確認瀏覽器已啟用硬體加速。</p></div></section>
+</main>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id), canvas=$('scene'),gl=canvas.getContext('webgl',{alpha:false,antialias:true,powerPreference:'high-performance'});
+if(!gl){$('unsupported').style.display='grid';return;}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),mix=(a,b,t)=>a+(b-a)*t;
+
+const SCENARIOS={
+ wood:{name:'木棧板／紙箱',tag:'A',classification:'A 類 · 普通火災',description:'木材、紙箱等固體可燃物。使用標示適用 A 類的滅火器，練習瞄準火源根部。',warning:'先通報並確保退路。只在初期小火且能安全操作時考慮使用滅火器；火勢或濃煙擴大立即撤離。',y:.5,z:-3.15,spacing:.43},
+ electrical:{name:'電線／延長線',tag:'C',classification:'C 類 · 通電設備',description:'以延長線與電線起火模型，辨識通電設備的危險。此場景使用標示適用 C 類的 ABC 乾粉。',warning:'通電中的電氣火災不可潑水。能安全操作時才切斷電源；不可冒險碰觸起火或漏電設備。無法處置時撤離並通報 119。',y:.64,z:-3.1,spacing:.34},
+ car:{name:'燃油汽車模型',tag:'模型',classification:'車輛 · 混合火災風險',description:'封閉訓練場中的燃油車外型模型，僅練習滅火器動作；車輛含固體、燃油與電氣等不同風險。',warning:'真實車輛起火：安全停車熄火、所有人離車、遠離車輛及車流並通報 119。不要打開引擎蓋或返回車內。本遊戲不模擬電動車電池熱失控，也不教民眾靠近燃燒車輛。',y:.66,z:-1.65,spacing:.34},
+ bin:{name:'紙類垃圾桶',tag:'A',classification:'A 類 · 生活起火',description:'垃圾桶中的紙張起火模型。只代表一般紙類，不含電池、化學品或其他混合廢棄物。',warning:'不確定內容物時，不要自行判定為普通火災。紙類小火也可能迅速延燒；先通報、留退路，火勢或濃煙擴大即撤離。',y:.91,z:-3.15,spacing:.31}
+};
+let scenarioId='wood',briefIndex=0,quizPassed=false;
+const scenario=()=>SCENARIOS[scenarioId];
+
+const vsub=(a,b)=>a.map((x,i)=>x-b[i]),dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm=a=>{let n=Math.hypot(...a);return a.map(x=>x/n);};
+function mul(a,b){let o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o;}
+function perspective(fov,ar,n,f){let s=1/Math.tan(fov/2);return new Float32Array([s/ar,0,0,0,0,s,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]);}
+function lookAt(eye,target){let z=norm(vsub(eye,target)),x=norm(cross([0,1,0],z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]);}
+function transform(m,p){return [0,1,2,3].map(r=>m[r]*p[0]+m[4+r]*p[1]+m[8+r]*p[2]+m[12+r]);}
+function shader(type,src){let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+function program(v,f){let p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,v));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,f));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;}
+const solid=program(`attribute vec3 aPos,aNormal,aColor;uniform mat4 uVP;uniform vec3 uOffset;uniform float uScale,uLight;varying vec3 vColor,vWorld;varying float vLight;void main(){vec3 p=aPos*uScale+uOffset;vWorld=p;vColor=aColor;vLight=.42+max(dot(aNormal,normalize(vec3(-.4,1.,.65))),0.)*.58+uLight;gl_Position=uVP*vec4(p,1.);}`,`precision mediump float;varying vec3 vColor,vWorld;varying float vLight;uniform vec3 uEye;uniform float uFire;void main(){float glow=max(0.,1.-length(vWorld-vec3(0.,.7,-3.2))/4.)*uFire;vec3 c=vColor*vLight+vec3(.48,.16,.025)*glow;float fog=1.-exp(-length(uEye-vWorld)*.019);c=mix(c,vec3(.055,.09,.11),fog);gl_FragColor=vec4(c,1.);}`);
+const particles=program(`attribute vec3 aPos;attribute vec4 aColor;attribute float aSize,aKind;uniform mat4 uVP;uniform float uPixel;varying vec4 vColor;varying float vKind;void main(){vec4 p=uVP*vec4(aPos,1.);gl_Position=p;gl_PointSize=min(200.,aSize*uPixel/max(p.w,.1));vColor=aColor;vKind=aKind;}`,`precision mediump float;varying vec4 vColor;varying float vKind;void main(){vec2 q=gl_PointCoord*2.-1.;float r=length(q);float a=smoothstep(1.,.1,r);if(vKind<.5){a=pow(a,1.3);a*=smoothstep(1.,.0,abs(q.x)*(1.+q.y*.35));}if(r>1.)discard;gl_FragColor=vec4(vColor.rgb,vColor.a*a);}`);
+function loc(p,n){return gl.getAttribLocation(p,n);}const sa=[loc(solid,'aPos'),loc(solid,'aNormal'),loc(solid,'aColor')],pa=[loc(particles,'aPos'),loc(particles,'aColor'),loc(particles,'aSize'),loc(particles,'aKind')];
+const su={};['uVP','uOffset','uScale','uLight','uEye','uFire'].forEach(n=>su[n]=gl.getUniformLocation(solid,n));const pu={vp:gl.getUniformLocation(particles,'uVP'),pixel:gl.getUniformLocation(particles,'uPixel')};
+function rgb(hex){return [(hex>>16&255)/255,(hex>>8&255)/255,(hex&255)/255];}
+let verts=[];
+function tri(a,b,c,col){const n=norm(cross(vsub(b,a),vsub(c,a)));for(let p of [a,b,c])verts.push(...p,...n,...col);}
+function box(x,y,z,w,h,d,col,rot=0){let c=typeof col==='number'?rgb(col):col;const cv=(a,b,e)=>[x+a*Math.cos(rot)-e*Math.sin(rot),y+b,z+a*Math.sin(rot)+e*Math.cos(rot)];let p=[cv(-w/2,-h/2,-d/2),cv(w/2,-h/2,-d/2),cv(w/2,h/2,-d/2),cv(-w/2,h/2,-d/2),cv(-w/2,-h/2,d/2),cv(w/2,-h/2,d/2),cv(w/2,h/2,d/2),cv(-w/2,h/2,d/2)];for(let f of [[0,3,2,1],[4,5,6,7],[0,4,7,3],[1,2,6,5],[3,7,6,2],[0,1,5,4]]){tri(p[f[0]],p[f[1]],p[f[2]],c);tri(p[f[0]],p[f[2]],p[f[3]],c);}}
+function cylinder(x,y,z,r1,r2,h,col,N=28){let c=rgb(col);for(let i=0;i<N;i++){let a=i/N*Math.PI*2,b=(i+1)/N*Math.PI*2,p=[x+r1*Math.cos(a),y-h/2,z+r1*Math.sin(a)],q=[x+r1*Math.cos(b),y-h/2,z+r1*Math.sin(b)],u=[x+r2*Math.cos(a),y+h/2,z+r2*Math.sin(a)],v=[x+r2*Math.cos(b),y+h/2,z+r2*Math.sin(b)];tri(p,u,v,c);tri(p,v,q,c);tri([x,y-h/2,z],q,p,c);tri([x,y+h/2,z],u,v,c);}}
+function pipe(a,b,r,col){let c=rgb(col),dir=norm(vsub(b,a)),u=norm(cross(dir,Math.abs(dir[1])>.95?[1,0,0]:[0,1,0])),v=cross(dir,u);for(let i=0;i<12;i++){let t=i/12*Math.PI*2,t2=(i+1)/12*Math.PI*2,off=t=>u.map((q,j)=>r*(q*Math.cos(t)+v[j]*Math.sin(t))),o=off(t),p=off(t2),a1=a.map((q,j)=>q+o[j]),a2=a.map((q,j)=>q+p[j]),b1=b.map((q,j)=>q+o[j]),b2=b.map((q,j)=>q+p[j]);tri(a1,b1,b2,c);tri(a1,b2,a2,c);}}
+
+function torus(x,y,z,R,r,col){let c=rgb(col);const point=(a,b)=>[x+(R+r*Math.cos(b))*Math.cos(a),y+(R+r*Math.cos(b))*Math.sin(a),z+r*Math.sin(b)];for(let i=0;i<32;i++)for(let j=0;j<8;j++){let a=i/32*Math.PI*2,b=(i+1)/32*Math.PI*2,u=j/8*Math.PI*2,v=(j+1)/8*Math.PI*2;tri(point(a,u),point(b,u),point(b,v),c);tri(point(a,u),point(b,v),point(a,v),c);}}
+
+function mesh(){let buffer=gl.createBuffer(),arr=new Float32Array(verts);gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.STATIC_DRAW);verts=[];return {buffer,count:arr.length/9};}
+// Entire training ground is procedural geometry; the file has no asset dependencies.
+box(0,-.14,-2,25,.25,25,0x25383c);box(0,3.4,-9,20,6.8,.22,0x263d43);box(-9,3.4,-2,.22,6.8,14,0x263d43);box(9,3.4,-2,.22,6.8,14,0x263d43);
+for(let i=-10;i<=10;i++){box(i,.002,-3,.012,.008,20,0x34484a);box(0,.003,i-3,20,.008,.012,0x34484a);}for(let i=-18;i<=18;i++)box(i*.5,3.1,-8.85,.028,6.1,.04,0x3a5054);
+for(let x of [-8.7,-4.7,4.7,8.7]){box(x,3.2,-8.6,.16,6.4,.23,0x182b31);box(x,5.8,-2,.16,.18,13,0x182b31);}
+box(0,6,-3,18,.2,.22,0x18282e);box(0,5.86,-4,6,.055,.2,0xa5c4c1);box(-5,5.86,0,3,.055,.2,0xa5c4c1);box(6,5.86,0,3,.055,.2,0xa5c4c1);
+// Marked fire tray and safety boundary.
+box(0,.04,-3.2,3.9,.12,1.6,0x17282c);box(0,.12,-3.99,3.95,.14,.08,0x425557);box(0,.12,-2.4,3.95,.14,.08,0x425557);box(-1.94,.12,-3.2,.08,.14,1.6,0x425557);box(1.94,.12,-3.2,.08,.14,1.6,0x425557);
+for(let z of [-4.4,-2.05])box(0,.015,z,4.9,.012,.075,0xa7a462);for(let x of [-2.45,2.45])box(x,.015,-3.225,.075,.012,2.42,0xa7a462);
+for(let i=0;i<10;i++){box(-2.2+i*.48,.017,-1.98,.2,.014,.18,i%2?0x223335:0xc1b76b,.45);}
+
+// Warehouse props, training bay markings and exit.
+for(let [x,z,s] of [[-5.5,-6,1],[5.7,-6,1.1],[-6,-3,.8]]){box(x,.64*s,z,1.5*s,1.28*s,1.3*s,0x665d49);for(let a of [-.6,.6]){box(x+a*s,.64*s,z+.66*s,.08*s,1.3*s,.02,0x9a8b67);box(x+a*s,.64*s,z-.66*s,.08*s,1.3*s,.02,0x9a8b67);}box(x,.64*s,z+.67*s,1.4*s,.08,.03,0x9a8b67);box(x,.64*s,z+.69*s,.07,1.6*s,.02,0x9a8b67,.77);}
+box(6.4,1.9,-8.7,1.7,3.8,.12,0x182e31);box(6.4,1.9,-8.58,1.5,3.6,.06,0x385952);box(6.9,1.9,-8.5,.07,.1,.08,0xadc4ae);box(6.4,4.1,-8.6,1.4,.4,.08,0x6cae8b);box(6.4,4.1,-8.53,.92,.12,.01,0xd2e9cd);
+box(-4,2.7,-8.72,2.25,1.6,.07,0x172d32);box(-4,2.72,-8.65,1.9,.025,.03,0xc1bd74);box(-4,3.35,-8.64,1.9,.025,.03,0xc1bd74);box(-4,2.1,-8.64,1.9,.025,.03,0xc1bd74);
+for(let x of [-3.3,3.3]){cylinder(x,.37,-4.9,.14,.09,.7,0xd2a45e,16);box(x,.75,-4.9,.24,.08,.24,0xd2a45e);box(x,.1,-4.9,.32,.12,.32,0x1a2d2f);}
+// Painted lane guides.
+for(let z=0;z>-5;z-=.55){box(-3.5,.008,z,.035,.01,.28,0x627c6b);box(3.5,.008,z,.035,.01,.28,0x627c6b);}const environment=mesh();
+
+const sceneMeshes={};
+for(let x of [-1.25,0,1.25])box(x,.19,-3.2,.19,.22,1.3,0x504034);for(let j=0;j<5;j++){box(0,.33,-3.72+j*.26,3.25,.12,.21,0x6d513b);box(0,.48,-3.72+j*.26,3.08,.1,.2,0x5b4534);}
+for(let x of [-1.05,-.35,.35,1.05])box(x,.6,-3.2,.54,.19,.8,0x4f3f32,.12*x);
+box(-.7,.93,-3.65,.7,.6,.55,0x79674b);box(-.7,.93,-3.37,.1,.58,.014,0xa18e68);box(.65,.79,-3.63,.6,.4,.6,0x6f5e44);
+sceneMeshes.wood=mesh();
+// Large, legible power strip and scorched electrical leads.
+box(0,.28,-3.1,3.35,.3,1.05,0x213b3f);box(0,.49,-3.1,2.9,.22,.52,0xc5ccb7);box(0,.61,-3.1,2.8,.025,.45,0x6e766a);
+for(let x of [-1,-.48,.04,.56,1.08]){box(x,.64,-3.1,.34,.04,.32,0xe1e4d0);for(let dx of [-.07,.07])box(x+dx,.665,-3.1,.035,.02,.09,0x233536);}
+box(-1.36,.64,-3.1,.13,.06,.24,0xc84939);
+for(let k=0;k<2;k++)for(let i=0;i<18;i++){let a=i/18*3.4-1.7,b=(i+1)/18*3.4-1.7;pipe([a,.18,-3.8+Math.sin(a*3+k)*.25],[b,.18,-3.8+Math.sin(b*3+k)*.25],.04,k?0x19292c:0x63533f);}
+box(1,.44,-3.78,.45,.4,.28,0x1a2b30);sceneMeshes.electrical=mesh();
+// Closed-bonnet training vehicle. Fire is in a separate frontal training strip.
+box(0,.72,-4,2.5,.65,4.5,0x943f39);box(0,1.08,-2.85,2.42,.12,1.9,0xb05043);box(0,1.46,-4.68,2.21,.82,2.12,0x793a35);box(0,1.92,-4.7,2.15,.12,2.05,0xac5144);
+box(0,1.5,-3.6,1.96,.65,.035,0x37565e);box(0,1.51,-5.76,1.97,.57,.035,0x2b4650);
+for(let x of [-1.12,1.12]){box(x,1.52,-4.65,.025,.57,1.78,0x36535a);box(x,1.52,-4.68,.05,.7,.07,0xb25748);box(x,.89,-4.12,.04,.03,1.1,0xc8b8a0);box(x*1.14,1.28,-3.7,.24,.14,.35,0x9a433c);}
+box(0,.65,-1.72,2.55,.18,.14,0x2d3c3f);box(0,.85,-1.72,1.0,.26,.04,0x17292d);for(let y of [.76,.86,.96])box(0,y,-1.69,.96,.025,.025,0x6d8580);
+for(let x of [-.89,.89])box(x,.89,-1.71,.49,.24,.045,0xe1d7a3);
+box(0,.53,-1.63,.7,.2,.025,0xc0c9ac);
+for(let x of [-1.22,1.22])for(let z of [-2.82,-5.34]){pipe([x-.16,.44,z],[x+.16,.44,z],.43,0x152327);pipe([x-.17,.44,z],[x+.17,.44,z],.23,0x7e9189);}
+sceneMeshes.car=mesh();
+// Wide paper-recycling bin with a visible rim and paper fuel.
+box(0,.47,-3.2,2.65,.76,1.34,0x2b6572);box(0,.86,-3.2,2.78,.1,1.45,0x447d84);box(0,.92,-3.2,2.48,.03,1.14,0x283c3e);
+for(let x=-1.1;x<1.2;x+=.22)box(x,.46,-2.52,.045,.65,.025,0x4c8790);
+for(let i=0;i<10;i++)box(-1.08+i*.23,.96+(i%2)*.07,-3.15+(i%3-1)*.22,.3,.08,.33,i%2?0x9c9f86:0xc7c6ab,i*.6);
+sceneMeshes.bin=mesh();
+
+// Red cylinder, shoulder, pressure gauge, grip and hose, rendered in the foreground.
+cylinder(0,.62,0,.34,.34,1.08,0xba3730);cylinder(0,1.25,0,.34,.18,.2,0xd24638);cylinder(0,.06,0,.3,.34,.14,0x6b2524);cylinder(0,1.4,0,.095,.095,.18,0x979d8f);box(0,1.52,0,.57,.085,.12,0x263a3c);box(.04,1.66,0,.62,.07,.13,0x263a3c);box(-.23,1.57,0,.06,.15,.1,0x9caa9e);box(0,.73,.342,.43,.59,.012,0xe1e5d2);box(0,.88,.352,.32,.065,.012,0xb6322d);box(0,.63,.353,.31,.016,.012,0x738576);box(0,.56,.353,.31,.016,.012,0x738576);box(0,.49,.353,.21,.016,.012,0x738576);pipe([.15,1.44,.08],[.49,1.3,.13],.055,0x152428);pipe([.49,1.3,.13],[.55,.7,.16],.053,0x152428);pipe([.55,.7,.16],[.64,.43,.21],.058,0x152428);cylinder(0,1.36,.18,.12,.12,.05,0xbac5ac,22);const extinguisher=mesh();
+// Nozzle at lower centre, angled into the room.
+pipe([-.55,0,.4],[-.5,.16,-.18],.085,0x172b2f);pipe([-.5,.16,-.18],[-.46,.18,-.48],.12,0x2b4449);pipe([-.46,.18,-.48],[-.46,.18,-.52],.13,0x607b7b);const nozzle=mesh();
+
+pipe([-.25,1.58,.18],[.41,1.58,.18],.018,0xdce2b4);torus(.51,1.58,.18,.105,.022,0xf0ec8d);const safetyPin=mesh();
+// A gloved palm, articulated fingers and sleeve around the nozzle's front grip.
+box(-.51,.045,-.17,.29,.17,.30,0xbda577);
+for(let z of [-.29,-.215,-.14,-.065]){pipe([-.65,.065,z],[-.66,.21,z],.035,0xd2bd8b);pipe([-.66,.21,z],[-.49,.27,z],.035,0xd2bd8b);pipe([-.49,.27,z],[-.38,.15,z],.035,0xc7af7c);}
+pipe([-.39,.02,-.02],[-.31,.15,-.15],.055,0xc9b080);pipe([-.5,-.05,-.02],[-.49,-.3,.2],.13,0xa68f63);pipe([-.49,-.24,.15],[-.47,-.55,.38],.16,0x253d40);pipe([-.49,-.23,.15],[-.49,-.3,.2],.165,0xd1c66b);const nozzleHand=mesh();
+
+const pbuffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST);gl.clearColor(.061,.1,.12,1);
+let W=innerWidth,H=innerHeight,DPR=1,eye=[0,2.3,5.8],target=[0,1,-3.2],VP,right,up,forward,viewHalf,aspect;
+let pointer={x:.5,y:.55},keys=new Set(),spraySources=new Set(),active=false,paused=false,mode='guided',step=0,time=0,gas=100,lock=0,squeeze=0,totalSpray=0,hitSpray=0,finished=false,clock=0,pinRemoved=false,previousAimX=0,sweepTravel=0,holdHint=0,remaining=60;
+let pinPulling=false,pinProgress=0,pinElapsed=0,pinPullFrom=0,zoomBlend=0,gripConfirmed=false,gripAnim=0;
+let cells=[],mist=[],puffs=[],toastTime=0,soundEnabled=false,ctx,noiseGain,noiseNode,hiddenPaused=false,lastFrame=0;
+const instructions=[['拉','握穩提把，拔出安全插梢','鏡頭會靠近滅火器；向右拉出發亮的插梢。'],['瞄','先握住噴嘴前端的握持處','不要只抓軟管中段；握穩後再瞄準火源根部。'],['壓','壓下握把，開始噴射','一手握穩噴嘴，另一手按住握把噴射。'],['掃','持續握穩噴嘴，緩慢左右掃動','沿根部覆蓋全部七個區域；別只對著火焰上方。']];
+const points=[];for(let i=0;i<7;i++){let span=document.createElement('span');$('coverage').append(span);let marker=document.createElement('div');marker.className='basepoint';$('markers').append(marker);points.push(marker);}
+function newCells(){let s=scenario();cells=Array.from({length:7},(_,i)=>({x:(i-3)*s.spacing,y:s.y,z:s.z,health:1,visited:false}));}
+newCells();
+function resize(){W=canvas.clientWidth;H=canvas.clientHeight;DPR=Math.min(devicePixelRatio||1,1.75);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);gl.viewport(0,0,canvas.width,canvas.height);aspect=W/H;viewHalf=Math.tan(Math.PI/7.3);updateCamera();}
+
+function updateCamera(){
+ let mobile=W<700,training=document.body.classList.contains('playing'),s=scenario();
+ let normalEye=training?[0,mobile?3.1:2.5,mobile?7.8:5.8]:[-.55,2.45,6.2],normalTarget=training?[0,mobile?.7:1,s.z]:[-.35,1.15,-3.2];
+ if(scenarioId==='car'){normalEye[2]+=1.0;normalTarget[1]=.95;}
+ let z=training?zoomBlend:0;
+ eye=normalEye.map((v,i)=>mix(v,(mobile?[1.45,2.75,5.75]:[1.65,2.4,4.25])[i],z));
+ target=normalTarget.map((v,i)=>mix(v,(mobile?[.23,1.48,1.45]:[.12,1.55,1.45])[i],z));
+ forward=norm(vsub(target,eye));right=norm(cross(forward,[0,1,0]));up=cross(right,forward);
+ VP=mul(perspective(Math.PI/3.65,aspect,.1,55),lookAt(eye,target));
+}
+function project(p){let r=transform(VP,p);return {x:(r[0]/r[3]*.5+.5)*W,y:(-r[1]/r[3]*.5+.5)*H};}
+function aimPoint(){let nx=(pointer.x*2-1)*aspect*viewHalf,ny=(1-pointer.y*2)*viewHalf,dir=norm(forward.map((v,i)=>v+right[i]*nx+up[i]*ny));let t=(scenario().y-eye[1])/dir[1];return t>0?eye.map((v,i)=>v+dir[i]*t):[100,100,100];}
+function nearCell(p){let b=-1,best=.7;cells.forEach((c,i)=>{let d=Math.hypot((p[0]-c.x)*.95,(p[2]-c.z)*1.25);if(d<best){best=d;b=i;}});return b;}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');toastTime=2.6;}
+
+function setStep(n){
+ step=n;document.body.classList.toggle('pinphase',n===0);document.querySelectorAll('.step').forEach((e,i)=>{e.classList.toggle('active',i===n);e.classList.toggle('done',i<n);e.querySelector('.num').textContent=i<n?'✓':String(i+1).padStart(2,'0');});
+ let v=instructions[n];$('stepword').textContent=v[0];$('tasktitle').textContent=v[1];$('taskdesc').textContent=v[2];
+ $('pincontrol').style.display=n===0?'flex':'none';$('pinring').style.display=n===0?'block':'none';$('pinlabel').style.display=n===0?'block':'none';
+ $('gripcard').classList.toggle('hidden',n!==1||gripConfirmed);$('gripspot').classList.toggle('hidden',n!==1||gripConfirmed);$('gripreminder').classList.toggle('hidden',n<1);
+ $('gripreminder').textContent=gripConfirmed?'✓ 已握緊噴嘴前端':'先握住噴嘴前端的握持處';
+ $('spraybtn').disabled=n<2;$('focus').style.display=n===0?'none':'block';
+ $('targetlabel').textContent=n===3?'沿火源根部左右掃射':'握穩噴嘴，對準火源根部';
+}
+
+function pull(){
+ if(!active||paused||step!==0||finished||pinPulling)return;
+ pinPulling=true;pinElapsed=0;pinPullFrom=pinProgress;pinDrag=false;
+ $('pinlabel').textContent='插梢正在脫離握把…';
+ $('pincontrol').querySelector('b').textContent='握穩提把，將插梢完整拔出';
+ canvas.focus({preventScroll:true});tone(650,.12);
+}
+function confirmGrip(){
+ if(!active||paused||finished||step!==1||gripConfirmed)return;
+ gripConfirmed=true;gripAnim=0;$('gripcard').classList.add('hidden');$('gripspot').classList.add('hidden');$('gripreminder').textContent='✓ 已握緊噴嘴前端';
+ $('tasktitle').textContent='握穩噴嘴，對準火源根部';$('taskdesc').textContent='現在移動準星到火源下方標記，保持穩定。';
+ canvas.focus({preventScroll:true});tone(730,.12);toast('已握住噴嘴前端 · 接著瞄準火源根部');
+}
+
+function start(){
+ active=true;paused=false;finished=false;time=0;gas=100;remaining=60;lock=0;squeeze=0;totalSpray=0;hitSpray=0;sweepTravel=0;holdHint=0;
+ pinRemoved=false;pinPulling=false;pinProgress=0;pinElapsed=0;zoomBlend=0;gripConfirmed=false;gripAnim=0;pinDrag=false;mist=[];puffs=[];keys.clear();spraySources.clear();newCells();
+ document.body.classList.add('playing');['home','pause','result','help','briefing'].forEach(id=>$(id).style.display='none');
+ $('pinlabel').textContent='安全插梢 · 向右拉出';$('pincontrol').querySelector('b').textContent='握穩提把，拉出發亮的插梢';
+ $('pausebtn').classList.remove('hidden');$('timelabel').textContent=mode==='challenge'?'剩餘時間':'演練時間';
+ $('scenariohud').textContent=scenario().name+' · ABC 乾粉';$('sceneid').textContent='TRAINING GROUND · '+scenario().tag;
+ setStep(0);updateCamera();let a=project([0,scenario().y+.8,scenario().z]);pointer.x=a.x/W;pointer.y=a.y/H;
+ canvas.focus({preventScroll:true});ensureAudio();updateHUD();
+}
+
+function home(){
+ active=false;paused=false;finished=false;pinPulling=false;zoomBlend=0;keys.clear();spraySources.clear();document.body.classList.remove('playing','pinphase');
+ ['pause','result','help','briefing'].forEach(id=>$(id).style.display='none');$('home').style.display='flex';$('pausebtn').classList.add('hidden');
+ newCells();updateCamera();refreshBest();$('start').focus({preventScroll:true});
+}
+function setPause(value){if(!active||finished)return;paused=value;keys.clear();spraySources.clear();$('pause').style.display=value?'grid':'none';if(value)$('resume').focus({preventScroll:true});else canvas.focus({preventScroll:true});}
+function finish(win,reason=''){finished=true;active=false;keys.clear();spraySources.clear();noise(false);$('result').style.display='grid';$('pausebtn').classList.add('hidden');let accuracy=totalSpray?hitSpray/totalSpray:0,score=win?Math.round(55+accuracy*20+gas*.15+Math.max(0,1-time/90)*10):Math.round((1-cells.reduce((s,c)=>s+c.health,0)/7)*45+step*5);score=clamp(score,0,100);$('resulttitle').textContent=win?'火已熄滅。動作到位。':'這次演練，先安全撤離。';$('resulteyebrow').textContent=win?'Training complete':'Practice & try again';$('resulticon').textContent=win?'✓':'!';$('resultmessage').textContent=win?`你已完成拉、瞄、壓、掃四個動作。${accuracy>.65?'瞄準穩定，藥劑運用得很好。':'下次試著更穩定地瞄準根部，減少藥劑浪費。'}`:reason;$('resultscore').textContent=score;$('resulttime').textContent=time.toFixed(1)+'s';$('resultgas').textContent=Math.round(gas)+'%';$('resultsteps').replaceChildren();for(let i=0;i<4;i++){let e=document.createElement('span');e.textContent=(i<step||win?'✓ ':'')+instructions[i][0];if(i<step||win)e.className='done';$('resultsteps').append(e);}$('resultfoot').textContent=win?'實際滅火後仍須注意復燃並交由消防人員處理；本遊戲無法取代實作訓練。':'實際火災火勢或濃煙擴大、無法滅火時，應立即撤離並通報 119。可重新演練，練習穩定瞄準與完整掃射。';if(win){try{let old=Number(localStorage.getItem('firedrill-v2-best-'+scenarioId+'-'+mode)||0);if(score>old)localStorage.setItem('firedrill-v2-best-'+scenarioId+'-'+mode,String(score));}catch(e){}tone(750,.14);setTimeout(()=>tone(1000,.25),160);}$('again').focus({preventScroll:true});}
+function refreshBest(){try{let b=localStorage.getItem('firedrill-v2-best-'+scenarioId+'-'+mode);$('best').textContent=b?'本機最佳紀錄　'+b+' / 100':'';}catch(e){$('best').textContent='';}}
+function updateHUD(){let heat=cells.reduce((s,c)=>s+c.health,0)/7*100;$('heatnum').textContent=Math.ceil(heat);$('heatfill').style.width=heat+'%';$('gasnum').textContent=Math.round(gas);$('gasfill').style.width=gas+'%';$('gasfill').style.background=gas<20?'#fb986b':'var(--yellow)';let t=mode==='challenge'?Math.ceil(remaining):Math.floor(time);$('timer').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');$('timer').style.color=mode==='challenge'&&remaining<11?'#ff9c7b':'';$('accuracy').textContent=totalSpray>.1?Math.round(hitSpray/totalSpray*100)+'%':'—';Array.from($('coverage').children).forEach((e,i)=>e.classList.toggle('done',cells[i].health<=0));}
+function ensureAudio(){if(!soundEnabled)return;try{if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();let buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*.3;noiseNode=ctx.createBufferSource();noiseNode.buffer=buffer;noiseNode.loop=true;let filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1300;noiseGain=ctx.createGain();noiseGain.gain.value=0;noiseNode.connect(filter);filter.connect(noiseGain);noiseGain.connect(ctx.destination);noiseNode.start();}ctx.resume();}catch(e){soundEnabled=false;}}
+function noise(on){if(noiseGain&&ctx)noiseGain.gain.setTargetAtTime(on&&soundEnabled?.38:0,ctx.currentTime,.06);}
+function tone(freq,duration){if(!soundEnabled)return;ensureAudio();if(!ctx)return;let o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.075,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+duration);}
+function sprayOn(source){if(!active||paused||finished)return;if(step<2){toast(step===0?'先拔開安全插梢':(!gripConfirmed?'先握住噴嘴前端，再瞄準':'先將準星瞄準火源根部'));return;}spraySources.add(source);ensureAudio();}
+function sprayOff(source){spraySources.delete(source);}
+function setPointer(e){let r=canvas.getBoundingClientRect();pointer.x=clamp((e.clientX-r.left)/r.width,.03,.97);pointer.y=clamp((e.clientY-r.top)/r.height,.08,.91);}
+canvas.addEventListener('pointermove',e=>{if(active&&!paused)setPointer(e);});
+canvas.addEventListener('pointerdown',e=>{if(!active||paused)return;e.preventDefault();canvas.focus({preventScroll:true});setPointer(e);canvas.setPointerCapture(e.pointerId);if(e.pointerType==='mouse'&&e.button===0)sprayOn('canvas');});
+canvas.addEventListener('pointerup',()=>sprayOff('canvas'));canvas.addEventListener('pointercancel',()=>sprayOff('canvas'));canvas.addEventListener('contextmenu',e=>e.preventDefault());
+$('spraybtn').addEventListener('pointerdown',e=>{e.preventDefault();$('spraybtn').setPointerCapture(e.pointerId);sprayOn('button');});for(let name of ['pointerup','pointercancel','lostpointercapture'])$('spraybtn').addEventListener(name,()=>sprayOff('button'));
+
+let pinX=0,pinStart=0,pinDrag=false;
+$('pinring').addEventListener('pointerdown',e=>{if(step!==0||pinPulling||paused)return;e.preventDefault();pinX=e.clientX;pinStart=e.clientX;pinDrag=true;$('pinring').setPointerCapture(e.pointerId);});
+$('pinring').addEventListener('pointermove',e=>{if(!pinDrag||pinPulling)return;pinX=e.clientX;pinProgress=clamp((pinX-pinStart)/120,0,.8);if(pinProgress>=.7){pinDrag=false;pull();}});
+$('pinring').addEventListener('pointerup',e=>{if(!pinDrag)return;let d=e.clientX-pinStart;pinDrag=false;if(Math.abs(d)<9||d>55)pull();else pinProgress=0;});
+$('pinring').addEventListener('pointercancel',()=>{pinDrag=false;if(!pinPulling)pinProgress=0;});
+$('pinring').addEventListener('click',e=>{if(e.detail===0||Math.abs(pinX-pinStart)<9)pull();});
+window.addEventListener('keydown',e=>{if(e.code==='Escape'){if($('briefing').style.display==='grid'){$('briefing').style.display='none';return;}if($('help').style.display==='grid'){closeHelp();return;}if(active&&!finished){e.preventDefault();setPause(!paused);}return;}if(!active||paused||finished)return;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyP','KeyG'].includes(e.code)){if(e.target instanceof HTMLButtonElement&&e.target!==$('spraybtn')&&e.code==='Space')return;e.preventDefault();keys.add(e.code);if(e.code==='KeyP')pull();if(e.code==='KeyG')confirmGrip();if(e.code==='Space'&&!e.repeat)sprayOn('key');}});
+window.addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='Space')sprayOff('key');});window.addEventListener('blur',()=>{keys.clear();spraySources.clear();if(active&&!paused&&!finished)setPause(true);});document.addEventListener('visibilitychange',()=>{if(document.hidden&&active&&!paused&&!finished){hiddenPaused=true;setPause(true);}});
+
+function selectScenario(id){
+ if(!SCENARIOS[id])return;scenarioId=id;
+ document.querySelectorAll('.scenebtn').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.scenario===id)));
+ $('homescene').textContent=scenario().classification+' / '+scenario().name;
+ $('homescenedetail').textContent=id==='car'?'封閉訓練模型 · 真實車輛起火先撤離通報':'ABC 乾粉滅火器 · 日常情境模擬';
+ canvas.setAttribute('aria-label','3D 消防訓練場：'+scenario().name+'，使用滑鼠或方向鍵瞄準火源根部');newCells();updateCamera();refreshBest();
+}
+function showBriefPage(n){
+ briefIndex=n;document.querySelectorAll('.briefpage').forEach((e,i)=>e.classList.toggle('on',i===n));document.querySelectorAll('.briefdots i').forEach((e,i)=>e.classList.toggle('on',i<=n));
+ $('brieftitle').textContent=['開始前，先記住這些。','認識滅火器，選對用途。','情境提醒與安全確認。'][n];
+ $('briefcount').textContent=(n+1)+' / 3';$('briefback').textContent=n===0?'返回主畫面':'上一步';
+ $('briefnext').textContent=['下一步：認識滅火器','下一步：情境提醒','開始 3D 操作'][n];$('briefnext').disabled=n===2&&!quizPassed;
+ $('briefing').querySelector('.briefmodal').scrollTop=0;
+}
+function showBriefing(){
+ active=false;paused=false;quizPassed=false;keys.clear();spraySources.clear();
+ $('briefing').style.display='grid';$('briefscene').textContent=scenario().name;$('briefclass').textContent=scenario().tag;$('briefdescription').textContent=scenario().description;$('briefwarning').textContent=scenario().warning;
+ const q=scenarioId==='car'?['真實車輛引擎處冒煙起火，先做什麼？','熄火、離車遠離，通報 119','打開引擎蓋，靠近噴射']:scenarioId==='electrical'?['通電設備起火時，應該怎麼做？','不用水；能安全斷電才操作','先潑水，再碰觸起火插頭']:scenarioId==='bin'?['垃圾桶內容不明，或可能含電池時？','不當一般紙火，撤離並通報','一律當紙張起火，繼續靠近']:['火勢或濃煙擴大、無法滅火時？','立即撤離，通報 119','繼續靠近，直到藥劑用完'];
+ $('quizquestion').textContent=q[0];$('quizsafe').textContent=q[1];$('quizunsafe').textContent=q[2];$('quizsafe').classList.remove('correct');$('quizunsafe').classList.remove('wrong');$('quizfeedback').textContent='選出安全的做法後，即可進入操作模擬。';showBriefPage(0);$('briefnext').focus({preventScroll:true});
+}
+$('briefback').onclick=()=>{if(briefIndex===0){$('briefing').style.display='none';$('start').focus({preventScroll:true});}else showBriefPage(briefIndex-1);};
+$('briefnext').onclick=()=>{if(briefIndex<2)showBriefPage(briefIndex+1);else if(quizPassed)start();};
+$('quizsafe').onclick=()=>{quizPassed=true;$('quizsafe').classList.add('correct');$('quizunsafe').classList.remove('wrong');$('quizfeedback').textContent='✓ 正確。先保護人員與退路，再依情況處置。';$('briefnext').disabled=false;tone(700,.1);};
+$('quizunsafe').onclick=()=>{quizPassed=false;$('quizunsafe').classList.add('wrong');$('quizsafe').classList.remove('correct');$('quizfeedback').textContent='請再想一下：不要冒險靠近火勢、打開引擎蓋，或碰觸起火電器。';$('briefnext').disabled=true;};
+document.querySelectorAll('.scenebtn').forEach(e=>e.onclick=()=>selectScenario(e.dataset.scenario));
+$('gripbtn').onclick=confirmGrip;$('gripspot').onclick=confirmGrip;
+$('start').onclick=showBriefing;document.querySelectorAll('.mode').forEach(e=>e.onclick=()=>{mode=e.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.setAttribute('aria-pressed',String(x===e)));refreshBest();});$('sound').onclick=()=>{soundEnabled=!soundEnabled;ensureAudio();$('soundpath').setAttribute('d',soundEnabled?'M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14':'m16 9 6 6m0-6-6 6');$('sound').setAttribute('aria-label',soundEnabled?'關閉音效':'開啟音效');if(soundEnabled)tone(520,.08);else noise(false);};$('pausebtn').onclick=()=>setPause(true);$('resume').onclick=()=>setPause(false);$('restart').onclick=start;$('backhome').onclick=home;$('again').onclick=start;$('result-home').onclick=home;
+let helpWasPaused=false;function closeHelp(){$('help').style.display='none';if(active&&!finished){paused=helpWasPaused;keys.clear();spraySources.clear();if(!paused)canvas.focus({preventScroll:true});}else $('helpbtn').focus({preventScroll:true});}$('helpbtn').onclick=()=>{helpWasPaused=paused;if(active){paused=true;keys.clear();spraySources.clear();}$('help').style.display='grid';$('closehelp').focus({preventScroll:true});};$('closehelp').onclick=closeHelp;
+
+function logic(dt){
+ if(!active||paused||finished){noise(false);return;}
+ zoomBlend=mix(zoomBlend,step===0?1:0,Math.min(1,dt*5.5));if(Math.abs(zoomBlend-(step===0?1:0))<.002)zoomBlend=step===0?1:0;updateCamera();
+ if(pinPulling){pinElapsed+=dt;let f=clamp(pinElapsed/.85,0,1);pinProgress=mix(pinPullFrom,1,1-Math.pow(1-f,3));if(f>=1){pinRemoved=true;pinPulling=false;setStep(1);$('pinlabel').textContent='安全插梢已完整拔除';toast('插梢已完整拔除 · 接著握住噴嘴前端');}}
+ if(gripConfirmed)gripAnim=Math.min(1,gripAnim+dt*2.5);
+ time+=dt;remaining=Math.max(0,60-time);let speed=.44;if(keys.has('ArrowLeft'))pointer.x-=speed*dt;if(keys.has('ArrowRight'))pointer.x+=speed*dt;if(keys.has('ArrowUp'))pointer.y-=speed*dt;if(keys.has('ArrowDown'))pointer.y+=speed*dt;pointer.x=clamp(pointer.x,.04,.96);pointer.y=clamp(pointer.y,.1,.9);let p=aimPoint(),near=nearCell(p),aiming=near>=0;
+if(step===1&&gripConfirmed&&gripAnim>=.9&&zoomBlend<.06){lock=aiming?Math.min(.65,lock+dt):Math.max(0,lock-dt*2);if(lock>=.65){setStep(2);toast('已瞄準根部 · 按住握把開始噴射');tone(800,.08);}}
+const spraying=spraySources.size>0&&step>=2&&gas>0;$('spraybtn').classList.toggle('spraying',spraying);noise(spraying);
+if(spraying){gas=Math.max(0,gas-dt*(mode==='challenge'?4.1:2.9));totalSpray+=dt;if(aiming)hitSpray+=dt;squeeze+=dt;if(step===2&&squeeze>=.55){setStep(3);toast('持續壓住 · 慢慢左右掃射全部火源');}if(step===3){sweepTravel+=Math.min(Math.abs(p[0]-previousAimX),.1);for(let c of cells){let d=Math.hypot((p[0]-c.x)*.95,(p[2]-c.z)*1.25);if(d<.59&&c.health>0){c.visited=true;c.health=Math.max(0,c.health-dt*.55*(1-d/.77));}}}
+let end=aiming?[p[0],scenario().y,p[2]]:vsub(p,eye).some(v=>Math.abs(v)>30)?[p[0]>.1?6:-6,2,-5]:[clamp(p[0],-9,9),scenario().y,clamp(p[2],-9,4)];let origin=nozzleOrigin();for(let k=0;k<Math.ceil(dt*230);k++){mist.push({p:origin.slice(),target:end.slice(),age:0,life:.33+Math.random()*.18,jitter:[(Math.random()-.5)*.75,Math.random()*.65,(Math.random()-.5)*.7],size:.12+Math.random()*.19});}if(aiming&&Math.random()<dt*26)puffs.push({x:p[0],y:scenario().y-.1,z:p[2],age:0,life:.65+Math.random()*.4});
+}else if(step===2)squeeze=0;previousAimX=p[0];
+if(step===3&&cells.every(c=>c.health<=0)){finish(true);return;}if(mode==='challenge'&&remaining<=0){finish(false,'60 秒已結束。下次緩慢掃過火源根部，讓乾粉覆蓋完整。');return;}if(gas<=0){if(mode==='guided'){gas=100;toast('練習模式已補充藥劑 · 繼續掃射剩餘區域');}else{finish(false,'模擬藥劑已用完。下次先瞄準根部，再穩定左右掃動。');return;}}
+if(spraying&&!aiming){holdHint+=dt;if(holdHint>1.7){toast('準星偏離火源 · 請壓低瞄準根部');holdHint=0;}}else holdHint=0;
+updateHUD();$('focus').classList.toggle('locked',aiming&&step>0);$('focus').style.setProperty('--lock',(step===1?lock/.65*100:0)+'%');}
+function nozzleOrigin(){return W<700?[.18,1.2,4.6]:[.12,1.02,3.3];}
+function drawMesh(m,offset=[0,0,0],scale=1,light=0){gl.bindBuffer(gl.ARRAY_BUFFER,m.buffer);for(let i=0;i<3;i++){gl.enableVertexAttribArray(sa[i]);gl.vertexAttribPointer(sa[i],3,gl.FLOAT,false,36,i*12);}gl.uniform3fv(su.uOffset,offset);gl.uniform1f(su.uScale,scale);gl.uniform1f(su.uLight,light);gl.drawArrays(gl.TRIANGLES,0,m.count);}
+function particleData(t,dt){let out=[];const push=(p,col,alpha,size,kind)=>out.push(...p,...col,alpha,size,kind);for(let i=0;i<7;i++){let c=cells[i];if(c.health<.005)continue;let intensity=c.health;for(let j=0;j<28;j++){let seed=i*77+j*13.79,f=(t*(.72+(j%5)*.07)+j*.157)%1,spread=.12+f*.18,x=c.x+Math.sin(seed+f*7)*spread,y=c.y+.04+f*(.9+Math.sin(seed)*.3)*intensity,z=c.z+Math.cos(seed+f*4)*.25;let a=(1-f)*(.44+intensity*.4);push([x,y,z],[1,mix(.8,.23,f),mix(.18,.025,f)],a,(.22+Math.sin(f*Math.PI)*.31)*(.4+intensity*.6),0);}for(let j=0;j<6;j++){let f=(t*.17+j*.164+i*.127)%1;push([c.x+Math.sin(i+j*4+t*.4)*f*.45,c.y+.35+f*2.8,c.z-.1-f*.25],[.28,.32,.32],(1-f)*.15*intensity,.4+f*.9,1);}}
+for(let i=0;i<21;i++){let f=(t*.4+i*.123)%1,c=cells[i%7];if(c.health>0)push([c.x+Math.sin(i*6+t)*.25,c.y+.1+f*1.8,c.z],[1,.6,.2],(1-f)*.8*c.health,.025,1);}
+if(!paused){for(let p of mist)p.age+=dt;for(let p of puffs)p.age+=dt;}mist=mist.filter(p=>p.age<p.life);puffs=puffs.filter(p=>p.age<p.life);
+for(let m of mist){let f=m.age/m.life,p=m.p.map((v,i)=>mix(v,m.target[i],f)+m.jitter[i]*f*f);push(p,[.84,.92,.85],.68*(1-f*.75),m.size*(.25+f*1.7),1);}for(let p of puffs){let f=p.age/p.life;push([p.x+Math.sin(p.x*30+f)*.18,p.y+f*.45,p.z],[.77,.85,.78],(1-f)*.2,.35+f*1.3,1);}return out;}
+
+function equipmentPose(){
+ let mobile=W<700,playing=document.body.classList.contains('playing');
+ if(!playing)return {offset:[2.38,.04,-.15],scale:1.08};
+ let base=mobile?[1.1,-.18,4.28]:[1.55,-.33,3.75],close=[0,.02,1.3];
+ return {offset:base.map((v,i)=>mix(v,close[i],zoomBlend)),scale:mix(mobile?.78:.84,1.3,zoomBlend)};
+}
+function pinWorld(){
+ let pose=equipmentPose();return [.51,1.58,.18].map((v,i)=>pose.offset[i]+v*pose.scale+(i===0?pinProgress*1.05:i===1?pinProgress*.09:0));
+}
+function render(t,dt){
+ gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(solid);gl.uniformMatrix4fv(su.uVP,false,VP);gl.uniform3fv(su.uEye,eye);
+ let heat=cells.reduce((s,c)=>s+c.health,0)/7;gl.uniform1f(su.uFire,heat*(.83+Math.sin(t*15)*.06));gl.disable(gl.BLEND);gl.depthMask(true);drawMesh(environment);drawMesh(sceneMeshes[scenarioId]);
+ let mobile=W<700,playing=document.body.classList.contains('playing'),pose=equipmentPose();
+ drawMesh(extinguisher,pose.offset,pose.scale,.12);
+ if(!pinRemoved||!playing){
+  let offset=pose.offset.map((v,i)=>v+(i===0?pinProgress*1.05:i===1?pinProgress*.09:0));
+  drawMesh(safetyPin,offset,pose.scale,playing&&step===0?.38+Math.sin(t*5)*.24:.12);
+ }
+ if(playing&&zoomBlend<.75){
+  let origin=nozzleOrigin(),offset=[origin[0]+.46,origin[1]-.18,origin[2]+.52];
+  drawMesh(nozzle,offset,1.05,.12);
+  if(gripConfirmed){let f=1-Math.pow(1-gripAnim,3);drawMesh(nozzleHand,[offset[0]+(1-f)*.6,offset[1]-(1-f)*.4,offset[2]+(1-f)*.4],1.05,.15);}
+ }
+for(let i=0;i<3;i++)gl.disableVertexAttribArray(sa[i]);let arr=new Float32Array(particleData(t,dt));gl.useProgram(particles);gl.uniformMatrix4fv(pu.vp,false,VP);gl.uniform1f(pu.pixel,H*DPR/(2*viewHalf));gl.bindBuffer(gl.ARRAY_BUFFER,pbuffer);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.DYNAMIC_DRAW);let sizes=[3,4,1,1],offsets=[0,12,28,32];for(let i=0;i<4;i++){gl.enableVertexAttribArray(pa[i]);gl.vertexAttribPointer(pa[i],sizes[i],gl.FLOAT,false,36,offsets[i]);}gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.drawArrays(gl.POINTS,0,arr.length/9);gl.depthMask(true);gl.disable(gl.BLEND);for(let i=0;i<4;i++)gl.disableVertexAttribArray(pa[i]);
+
+if(document.body.classList.contains('playing')){
+ const fullView=zoomBlend<.08;
+ for(let i=0;i<7;i++){let p=project([cells[i].x,cells[i].y,cells[i].z]);points[i].style.left=p.x+'px';points[i].style.top=p.y+'px';points[i].classList.toggle('done',cells[i].health<=0);points[i].style.display=step===0||!fullView?'none':'block';points[i].style.opacity=mode==='challenge'&&step===3?'.45':'.85';}
+ let p=project([0,scenario().y,scenario().z]);$('targetlabel').style.left=p.x+'px';$('targetlabel').style.top=(p.y+18)+'px';$('targetlabel').style.display=step>0&&fullView&&gripConfirmed&&!finished?'block':'none';
+ $('focus').style.display=step>0&&fullView&&!finished?'block':'none';$('focus').style.left=pointer.x*W+'px';$('focus').style.top=pointer.y*H+'px';
+ if(step===0){let pin=project(pinWorld());$('pinring').style.left=pin.x+'px';$('pinring').style.top=pin.y+'px';$('pinring').style.opacity=pinPulling?'.25':'1';$('pinlabel').style.left=pin.x+'px';$('pinlabel').style.top=(pin.y-45)+'px';}
+ let o=nozzleOrigin(),gp=project([o[0],o[1],o[2]+.18]);$('gripspot').style.left=gp.x+'px';$('gripspot').style.top=gp.y+'px';
+}
+}
+function frame(ms){let dt=lastFrame?Math.min((ms-lastFrame)/1000,.05):.016;lastFrame=ms;if(!paused)clock+=dt;logic(dt);if(toastTime>0){toastTime-=dt;if(toastTime<=0)$('toast').classList.remove('show');}render(clock,dt);requestAnimationFrame(frame);}
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(active)setPause(true);$('unsupported').style.display='grid';$('unsupported').querySelector('h2').textContent='3D 顯示暫時中斷';$('unsupported').querySelector('p').textContent='請重新開啟此檔案，或用其他支援 WebGL 的瀏覽器執行。';});window.addEventListener('resize',resize);resize();refreshBest();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
