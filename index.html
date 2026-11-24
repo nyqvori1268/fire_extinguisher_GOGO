@@ -405,9 +405,9 @@ if(document.body.classList.contains('playing')){
 }
 }
 function frame(ms){let dt=lastFrame?Math.min((ms-lastFrame)/1000,.05):.016;lastFrame=ms;if(!paused)clock+=dt;logic(dt);if(toastTime>0){toastTime-=dt;if(toastTime<=0)$('toast').classList.remove('show');}render(clock,dt);requestAnimationFrame(frame);}
-canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();if(active)setPause(true);$('unsupported').style.display='grid';$('unsupported').querySelector('h2').textContent='3D 顯示暫時中斷';$('unsupported').querySelector('p').textContent='請重新開啟此檔案，或用其他支援 WebGL 的瀏覽器執行。';});window.addEventListener('resize',resize);resize();refreshBest();requestAnimationFrame(frame);
+canvas.addEventListener('webglcontext lost',e=>{e.preventDefault();if(active)setPause(true);$('unsupported').style.display='grid';$('unsupported').querySelector('h2').textContent='3D 顯示暫時中斷';$('unsupported').querySelector('p').textContent='請重新開啟此檔案，或用其他支援 WebGL 的瀏覽器執行。';});window.addEventListener('resize',resize);resize();refreshBest();requestAnimationFrame(frame);
 })();
 </script>
 </body>
 </html>
-/* ಠ_ಠ */
+//ಠ_ಠ
